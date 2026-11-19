@@ -1,0 +1,18 @@
+{
+  "name": "breadth_half",
+  "provenance": "causal",
+  "trading_days": 252,
+  "fee_rate_each_side": 0.0005,
+  "final_equity": 126996.98547749918,
+  "total_return": 0.2699698547749918,
+  "annualized_return": 0.2699698547749918,
+  "max_drawdown": 0.08028081469787951,
+  "sharpe_rf_zero": 1.3330037376456099,
+  "average_open_weight": 0.4112200705482888,
+  "average_close_weight": 0.41117016312843824,
+  "order_count": 107,
+  "fees_paid": 4194.19695067222,
+  "direction_accuracy": 0.5317460317460317,
+  "price_mae_points": 58.164339257298735,
+  "buy_hold_net_return": -0.16995807365535853
+}

@@ -1,0 +1,6 @@
+*.py text eol=lf
+*.md text eol=lf
+data/*.txt binary
+requirements.txt text eol=lf
+*.csv text eol=crlf
+*.docx binary
