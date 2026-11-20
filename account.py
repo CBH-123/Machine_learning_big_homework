@@ -71,8 +71,7 @@ class LongOnlyT1Account:
         self.cash += price * units * (1 - self.fee_rate)
         self.last_action_date = on
 
-def simulate(rows, forecasts, capital=100_000):
-    fee_rate = m.FEE_RATE
+def simulate(rows, forecasts, capital=100_000, fee_rate=m.FEE_RATE):
     weights = np.array([float(rec["strategy_weight"]) for rec in forecasts])
     if len(weights) != len(forecasts) or not np.isfinite(weights).all() or np.any(weights < 0) or np.any(weights > 1+1e-12):
         raise ValueError("目标仓位必须是0到1之间的有限数")

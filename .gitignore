@@ -1,3 +1,5 @@
 __pycache__/
 .venv/
 run_output/
+evaluation_output/
+validation_output/

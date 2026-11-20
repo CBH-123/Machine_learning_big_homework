@@ -48,4 +48,19 @@ python run.py
 
 脚本从 [指数日线](data/SZ%23399006.txt) 和 [成分股市场宽度](data/breadth.csv) 重新训练、生成预测并回测，将结果写到 `run_output/`。提交的 [参考指标](results/metrics.json)、[每日信号](results/signals.csv)、[每日账户](results/daily.csv) 和 [成交明细](results/trades.csv) 可直接对照。一次运行还会逐笔独立核对费用、T+1 可卖份额、余额和回撤。不同计算库或硬件上的浮点结果可能略有差别。
 
+## 基线、消融和历史验证
+
+```bash
+# 正式期最终评价：默认复用归档信号，另算零预测和 Ridge 基线
+python evaluate.py
+
+# 正式期之前的历史验证：重新滚动训练，不读取正式期信号
+python evaluate.py --start 2024-01-02 --end 2025-10-09 --recompute --out validation_output
+
+# 防未来数据、T+1、账户与实验规则测试
+python -m unittest discover -s tests -v
+```
+
+实验输出包括预测 MAE/RMSE、7 种策略的同口径消融，以及 0、0.05%、0.10% 单边费用敏感性。参数只能根据历史验证选择，不能根据正式期对照表回头挑选最高收益方案。详见 [实验定义与输出说明](docs/evaluation.md)。
+
 从代码阅读：先看 [仓位决策与运行入口](run.py)，再看 [TCN](tcn.py)、[交易效用模型](utility.py)、[量价特征](features.py) 和 [交易账户](account.py)。想重画上图，运行 `python plot_results.py`（只用 Python 标准库）。
