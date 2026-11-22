@@ -40,10 +40,22 @@ flowchart TD
 
 ## 复现
 
-在本目录下使用 Python 3.12。第一条实验命令用归档信号跑消融并生成图，第二条从原始行情滚动重训并核对账本。带 step 编号的模块是运行入口实际导入的共享代码。
+在本目录下使用 Python 3.12。第一条实验命令用归档信号跑消融并生成图，第二条从原始行情滚动重训并核对账本。
 
 ~~~sh
 python -m pip install -r requirements.txt
-python step43_drawdown_jump.py
-python step43_drawdown_jump.py --retrain
+python run.py
+python run.py --retrain
 ~~~
+
+## 代码导航
+
+| 文件 | 职责 |
+|---|---|
+| [run.py](run.py) | 运行入口、保护规则、消融比较和绘图 |
+| [strategy.py](strategy.py) | 滚动训练、备用模型切换和各区间评分 |
+| [tcn.py](tcn.py) | 训练时序卷积网络并预测 |
+| [utility.py](utility.py) | 用持仓收益训练第二个模型 |
+| [features.py](features.py) | 按历史行情构造输入特征 |
+| [market_data.py](market_data.py) | 读取原始行情、账户数据结构和文件读写 |
+| [backtest.py](backtest.py) | 按 T+1 撮合交易、扣费并核对账本 |

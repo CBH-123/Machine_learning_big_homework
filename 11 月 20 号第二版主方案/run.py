@@ -1,3 +1,18 @@
+import market_data
+from backtest import verify_consensus_ledger
+import backtest as engine
+import tcn
+import features as m
+from strategy import rebuild
+from strategy import score
+from strategy import read
+from strategy import ledger
+from strategy import extension
+from strategy import archive_signals
+from strategy import PERIODS
+from strategy import ROOT
+from strategy import PRIMARY
+from strategy import BASE
 """Dissect an observed equity jump and test pre-close, staged fallback risk limits."""
 import argparse
 from collections import defaultdict
@@ -9,8 +24,7 @@ import os
 from pathlib import Path
 import statistics
 
-from step40_fallback_guard import BASE, PRIMARY, ROOT, PERIODS, archive_signals, extension, ledger, m, read, score, seq, tcn
-from run_adaptive_consensus import rebuild
+
 from threadpoolctl import threadpool_limits
 
 
@@ -37,9 +51,9 @@ for variant in ("staged_entry", "volatility_cap"):
 
 def policies(rows, records, names):
     forecasts = [{**r, "strategy_weight":r["ridge"]} for r in records]
-    shadow = seq.replay_engine.replay(rows, forecasts, {"name":"ridge","kind":"forecast_weight"},
+    shadow = engine.replay(rows, forecasts, {"name":"ridge","kind":"forecast_weight"},
                                       rebalance_on_weight_change_only=True, liquidate_at_end=False)
-    seq.verify_consensus_ledger(rows, forecasts, shadow, liquidate_at_end=False)
+    verify_consensus_ledger(rows, forecasts, shadow, liquidate_at_end=False)
     equity = [s["equity"] for s in shadow["curve"]]
     by_date = {str(bar["date"]):i for i,bar in enumerate(rows)}
     changes = [0.] + [b["close"]/a["close"]-1 for a,b in zip(rows,rows[1:])]
@@ -109,10 +123,10 @@ def inspect_run(rows, records, name, out):
     orders=[r for r in records if first<=r["target_date"]<=last]
     s,run=ledger(rows,name,orders)
     data=attribution(rows,orders,run)
-    m.write_csv(out/f"{name}_attribution.csv",data)
+    market_data.write_csv(out/f"{name}_attribution.csv",data)
     if name!=OLD:
-        m.write_csv(out/f"{name}_history_signals.csv",orders)
-        m.write_csv(out/f"{name}_history_trades.csv",run["trades"])
+        market_data.write_csv(out/f"{name}_history_signals.csv",orders)
+        market_data.write_csv(out/f"{name}_history_trades.csv",run["trades"])
     trough=min(range(len(run["curve"])),key=lambda i:run["curve"][i]["drawdown"])
     peak=max(range(trough+1),key=lambda i:run["curve"][i]["equity"])
     strip={"2024-09-30","2024-10-08"}
@@ -123,7 +137,7 @@ def inspect_run(rows, records, name, out):
             "two_session_compound":expm1(fsum(log1p(r["account_return"]) for r in data if r["date"] in strip))}
 
 def plot_audit(out, recommendation):
-    os.environ.setdefault("MPLCONFIGDIR", str(m.ROOT / ".cache/matplotlib"))
+    os.environ.setdefault("MPLCONFIGDIR", str(market_data.ROOT / ".cache/matplotlib"))
     import matplotlib
     matplotlib.use("Agg")
     from matplotlib import dates, font_manager, pyplot as plt
@@ -188,7 +202,7 @@ def main():
     args=parser.parse_args()
     out=args.out
     out.mkdir(parents=True,exist_ok=True)
-    prices,meta=m.read_prices(m.ROOT/"data/raw/SZ#399006.txt")
+    prices,meta=market_data.read_prices(market_data.ROOT/"data/raw/SZ#399006.txt")
     if args.retrain:
         locked=json.loads((out/"selection.json").read_text())
         selected=locked["selected"]
@@ -272,7 +286,7 @@ def main():
     diagnostics={n:inspect_run(rows,choices[n],n,out) for n in dict.fromkeys((OLD,selected,recommended,*FOLLOWUPS))}
     tcn.write_json(out/"jump_audit.json",diagnostics)
     plot_audit(out,recommended)
-    m.write_csv(out/("retrained.csv" if args.retrain else "comparison.csv"),[s for g in scores.values() for s in g.values()])
+    market_data.write_csv(out/("retrained.csv" if args.retrain else "comparison.csv"),[s for g in scores.values() for s in g.values()])
     for n in names:
         print(n,[(p,round(100*g[n]["total_return"],3),round(100*g[n]["max_drawdown"],3)) for p,g in scores.items()])
     print("Initial guard:",selected,"/ With jump constraint:",recommended)
