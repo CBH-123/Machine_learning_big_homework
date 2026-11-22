@@ -1,0 +1,85 @@
+{
+  "input_sha256": "c0d3b17d9f6d06f5eb4750533af4ea76d4aa752dadbec7809df9adebd71665c8",
+  "baseline": "old20",
+  "fees_each_side": 0.0005,
+  "grid": {
+    "old20": [
+      0.2,
+      0.5,
+      0.5,
+      1.0
+    ],
+    "earlier": [
+      0.18,
+      0.5,
+      0.5,
+      1.0
+    ],
+    "early_cap": [
+      0.18,
+      0.5,
+      0.5,
+      0.75
+    ],
+    "two_stage": [
+      0.18,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "two_stage_cap": [
+      0.18,
+      0.5,
+      0.75,
+      0.75
+    ],
+    "handover": [
+      0.18,
+      0.5,
+      1.0,
+      1.0
+    ],
+    "handover_cap": [
+      0.18,
+      0.5,
+      1.0,
+      0.75
+    ],
+    "handover_midcap": [
+      0.18,
+      0.5,
+      1.0,
+      0.875
+    ],
+    "earlier_midcap": [
+      0.18,
+      0.5,
+      0.5,
+      0.875
+    ],
+    "two_stage_midcap": [
+      0.18,
+      0.5,
+      0.75,
+      0.875
+    ],
+    "staged_entry": [
+      0.18,
+      0.5,
+      1.0,
+      1.0
+    ],
+    "volatility_cap": [
+      0.18,
+      0.5,
+      1.0,
+      1.0
+    ]
+  },
+  "rules": "First threshold and half-threshold release, more protection at 20% until below 10%. Numbers in grid are first trigger, first and deep consensus share, target cap while active. Use previous-close Ridge shadow equity, during existing fallback only, next open.",
+  "selection": "Lock the lowest 2023-24 drawdown among variants whose early daily equity and trades exactly reproduce old20 and whose 2023-24 net and double-fee return are no lower than old20. Tie: prefer higher net return. Verify 2025, combined period, coursework and forward after lock.",
+  "midpoint_check": "The 87.5% cap is a follow-up sensitivity added after seeing the original cap endpoints. It is excluded from the initial guard selection.",
+  "followup": "Two more exploratory alternatives aim to reduce jump concentration: add at most 50 percentage points to target exposure per session, or cap exposure at trailing 252-session volatility divided by 20-session volatility. Apply only while protection is enabled.",
+  "concentration_check": "Check the 87.5% midpoint across all three depths. Among all rules that match early weights, preserve 2023-24 returns at standard and double fees, and reduce drawdown, choose the smallest drawdown with no increase in maximum rolling two-session gain.",
+  "post_hoc": "All windows previously viewed. The 18% threshold showed promise in the previous sensitivity run. The return audit uses no alteration of actual returns. Removing extreme days is attribution only."
+}

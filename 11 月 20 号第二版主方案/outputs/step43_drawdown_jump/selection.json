@@ -1,0 +1,21 @@
+{
+  "selected": "handover",
+  "passed": [
+    "earlier",
+    "two_stage",
+    "handover"
+  ],
+  "recommended": "two_stage_midcap",
+  "max_rolling_two_day_gain": {
+    "old20": 0.3099750784285318,
+    "earlier": 0.3099750784285318,
+    "two_stage": 0.331878930682457,
+    "handover": 0.3532361244348281,
+    "handover_midcap": 0.3107393911192824,
+    "two_stage_midcap": 0.2980025000025137
+  },
+  "smoother": [
+    "earlier",
+    "two_stage_midcap"
+  ]
+}
